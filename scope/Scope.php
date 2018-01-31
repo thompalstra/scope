@@ -1,10 +1,13 @@
 <?php
 use scope\base\Environment;
 
+use scope\web\Controller;
+
 class Scope{
 
     public static $context;
     public static $environment;
+    public static $controller;
 
     public static function run(){
         include('autoloader.php');
@@ -14,13 +17,11 @@ class Scope{
 
         Scope::$environment = Environment::fromHost( $_SERVER['HTTP_HOST'] );
 
-
-
-        var_dump(Scope::$environment);
+        return Scope::$controller = Controller::handle( Controller::parse( $_SERVER['REQUEST_URI'] ) );
     }
 }
 
 class ScopeContext{
-    
+    public $path;
 }
 ?>
