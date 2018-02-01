@@ -2,10 +2,15 @@
 namespace scope\web;
 
 use Scope;
+use scope\Html;
 
 use scope\base\exceptionsScopeException;
 
 class View extends Scope\core\Base{
+
+    const POS_HEAD = 'head';
+    const POS_FOOTER = 'footer';
+
     public function render( $viewId, $layoutId, $data ){
 
         if( $viewId[0] == '/' ){
@@ -56,6 +61,63 @@ class View extends Scope\core\Base{
             return $id . '.php' ;
         } else {
             return DIRECTORY_SEPARATOR . Scope::$environment->layoutPath . $id . '.php' ;
+        }
+    }
+
+    public $assets = [
+        'head' => [],
+        'footer' => []
+    ];
+
+    public function registerJsFile( $js, $position = self::POS_HEAD ){
+        $this->assets[$position][] = Html::script('', [
+            'src' => $js
+        ]);
+    }
+    public function registerCssFile( $css, $position = self::POS_HEAD ){
+        $this->assets[$position][] = Html::link('', [
+            'href' => $css,
+            'rel' => 'stylesheet'
+        ]);
+    }
+    public function registerJs( $js, $position = self::POS_FOOTER ){
+        $this->assets[$position][] = Html::script($js);
+    }
+    public function registerCss( $css, $position = self::POS_HEAD ){
+        $this->assets[$position][] = Html::style($css);
+    }
+
+    public function registerBundle( $bundle ){
+        foreach( $bundle::getJs() as $i => $js ){
+            if( is_array( $js ) ){
+                $file = $i;
+                $pos = ( isset( $js['position'] ) ? $js['position'] : null );
+            } else {
+                $file = $js;
+                $pos = self::POS_HEAD;
+            }
+            $this->registerJsFile( $file, $pos );
+        }
+        foreach( $bundle::getCss() as $i => $css ){
+            if( is_array( $css ) ){
+                $file = $i;
+                $pos = ( isset( $css['position'] ) ? $css['position'] : null );
+            } else {
+                $file = $css;
+                $pos = self::POS_HEAD;
+            }
+            $this->registerCssFile( $file, $pos );
+        }
+    }
+
+    public function head(){
+        foreach( $this->assets[self::POS_HEAD] as $asset ){
+            echo $asset;
+        }
+    }
+    public function footer(){
+        foreach( $this->assets[self::POS_FOOTER] as $asset ){
+            echo $asset;
         }
     }
 }

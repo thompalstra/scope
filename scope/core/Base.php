@@ -15,21 +15,22 @@ class Base{
         }
     }
 
+    public static function className(){
+        return get_called_class();
+    }
+
 
     public function load(){
-
+        echo 'not implemented'; die();
     }
-    public function rules(){
 
-    }
+
+    public function rules(){    return [];  }
 
     public function validate(){
         foreach( $this->rules() as $rule ){
             Rule::validate( $rule, $this );
         }
-    }
-    public function validateRule( $rule ){
-
     }
 
     public function addError( $attribute, $message ){

@@ -3,7 +3,7 @@ return [
     'web' => [
         'urlClass' => 'Scope\web\Url',
         'controller' => 'site',
-        'action' => 'home',
+        'action' => 'index',
         'routes' => [
 
         ]

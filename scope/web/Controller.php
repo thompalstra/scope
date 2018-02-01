@@ -77,7 +77,7 @@ class Controller extends Scope\core\Base{
         $controllerId = Scope::$environment->web['controller'];
         $actionId = Scope::$environment->web['action'];
 
-        $viewPath = '';
+        $viewPath = $controllerId . DIRECTORY_SEPARATOR;
         $controllerPath = Scope::$environment->viewPath . $controllerId . '.php';
 
         return new $controllerClass([
@@ -97,6 +97,8 @@ class Controller extends Scope\core\Base{
     public function runAction( $actionId, $params = [] ){
 
         Scope::$controller = $this;
+
+
 
         $action = 'action' . self::createname( $actionId );
         if( method_exists( $this, $action ) ){

@@ -1,0 +1,107 @@
+/* asset */
+
+
+@media (min-width: 0px){
+    .flow{
+        width: 100%;
+    }
+    .xs12{
+        width: 100%;
+    }
+}
+@media (min-width: 320px){
+
+}
+@media (min-width: 640px){
+    .flow{
+        width: 640px;
+    }
+}
+@media (min-width: 720px){
+    .flow{
+        width: 720px;
+    }
+}
+@media (min-width: 1080px){
+    .flow{
+        width:1080px;
+    }
+}
+@media (min-width: 1440px){
+    .flow{
+        width:1440px;
+    }
+}
+
+.col{
+    display: inline-block;
+}
+
+.flow{}
+.flow.center{
+    margin: 0 auto;
+}
+
+.pull-left{
+    float: left;
+}
+.pull-right{
+    float: right;
+}
+
+html,body{
+    margin: 0;
+    padding: 0;
+}
+
+nav.nav{
+
+}
+
+nav.nav .nav.list{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #333;
+    color: white;
+    min-width: 100%;
+    display: inline-block;
+}
+nav.nav .nav.item{
+    display: inline-block;
+    position: relative;
+}
+nav.nav .nav.item label,
+nav.nav .nav.item a{
+    display: inline-block;
+    text-decoration: none;
+    padding: 20px 20px;
+    color: inherit;
+    white-space: pre;
+}
+
+nav.nav .nav.item.dropdown a,
+nav.nav .nav.item.dropdown label:after{
+    content: " v ";
+}
+
+nav.nav .nav.item .nav.list{
+    position: absolute;
+    top: 100%;
+
+    visibility: hidden;
+    pointer-events: none;
+}
+
+nav.nav .nav.item .nav.list .nav.item{
+    min-width: 100%;
+}
+
+nav.nav .nav.item:hover .nav.list{
+    visibility: visible;
+    pointer-events: all;
+}
+nav.nav .nav.item:hover{
+    background-color: #444;
+    color: white;
+}

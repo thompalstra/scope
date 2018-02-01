@@ -1,6 +1,7 @@
 <?php
 use scope\core\Environment;
 use scope\web\Controller;
+use scope\db\Query;
 
 class Scope{
 
@@ -21,6 +22,10 @@ class Scope{
         Scope::$environment = Environment::fromHost( $_SERVER['HTTP_HOST'] );
 
         return Controller::handle( Controller::parse( $_SERVER['REQUEST_URI'] ) );
+    }
+
+    public static function query(){
+        return new Query();
     }
 }
 

@@ -3,7 +3,7 @@ namespace scope\core;
 
 use Scope;
 
-use scope\exceptionsScopeException;
+use scope\base\exceptions\ScopeException;
 
 class Environment extends \scope\core\Base{
 
@@ -30,6 +30,10 @@ class Environment extends \scope\core\Base{
 
         $env->loadConfigurations( [ 'common', $env->name ] );
         $env->loadDbConfig( $env->name );
+
+        Scope::$context->conn = new \PDO( $env->db['dsn'], $env->db['username'], $env->db['passwd'], [
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+        ] );
 
         if( !$env->validate() ){
             foreach( $env->getErrors() as $attributes => $messages ){
@@ -74,7 +78,15 @@ class Environment extends \scope\core\Base{
     }
 
     public function loadDbConfig( $name ){
-        $path = Scope::$context->path . $name . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'db.php';
+        $path = Scope::$context->path . 'common' . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'connection.php';
+
+        if( file_exists( $path ) ){
+            foreach( include( $path ) as $k => $v ){
+                $this->$k = $v;
+            }
+        } else {
+            throw new ScopeException( "Configuration error: missing $path", 500 );
+        }
     }
 }
 ?>

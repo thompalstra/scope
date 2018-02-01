@@ -1,5 +1,5 @@
 <?php
-namespace frontend\controllers;
+namespace backend\controllers;
 
 class SiteController extends \scope\web\Controller{
     public function actionError( $exception ){
