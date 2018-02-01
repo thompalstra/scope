@@ -1,12 +1,27 @@
 <?php
 namespace scope\web;
 
-use scope\base\exceptions\ScopeException;
+use Scope;
 
-class Controller extends \scope\base\Base{
+use scope\web\View;
+
+use scope\base\exceptionsScopeException;
+use scope\base\exceptions\HtmlException;
+
+class Controller extends Scope\core\Base{
+
+    public $layout;
+
+    public function render( $viewId, $data = [] ){
+        $view = new View();
+        $layoutId = ( empty( $this->layout ) ? Scope::$environment->web['layout'] : $this->layout );
+        return $view->render( $viewId, $layoutId, $data );
+    }
+    public function renderPartial( $viewId, $data = [] ){
+
+    }
+
     public static function parse( $request_uri ){
-
-
         return [$request_uri, $_GET];
     }
     public static function handle( $route ){
@@ -19,47 +34,57 @@ class Controller extends \scope\base\Base{
         $controllerId = null;
         $path = null;
 
-        if( count( $parts ) > 0 ){
+        if( count( $parts ) > 0 && !empty( $parts[ count( $parts ) -1 ] ) ){
             $actionId = $parts[ count( $parts ) -1 ];
             array_pop( $parts );
         } else {
-            $actionId = \Scope::$environment->web['action'];
+            $actionId = Scope::$environment->web['action'];
         }
 
-        if( count( $parts ) > 0 ){
+        if( count( $parts ) > 0 && !empty( $parts[ count( $parts ) -1 ] ) ){
             $controllerId = $parts[ count( $parts ) -1 ];
             array_pop( $parts );
         } else {
-            $controllerId = \Scope::$environment->web['controller'];
+            $controllerId = Scope::$environment->web['controller'];
         }
 
-        if( count( $parts ) > 0 ){
+        if( count( $parts ) > 0 && !empty( $parts[0] ) ){
             $path = implode( DIRECTORY_SEPARATOR, $parts ) . DIRECTORY_SEPARATOR;
         }
 
         $controller = self::createName( $controllerId ) . 'Controller';
 
-        $viewPath = \Scope::$environment->viewPath . $path . $actionId . '.php';
-        $controllerClass = \Scope::$environment->name . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . $path . $controller;
+        $controllerClass =  Scope::$environment->name . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . $path . $controller;
+        $viewPath = $path . $controllerId . DIRECTORY_SEPARATOR;
 
         if( !class_exists( $controllerClass ) ){
             $defaultController = self::getDefaultController();
-            return $defaultController->runError( new Exception("$controllerClass does not exist", 404 ) );
+            return $defaultController->runError( new HtmlException("Page not found", 404 ) );
         }
 
+        $c = new $controllerClass([
+            'actionId' => $actionId,
+            'controllerId' => $controllerId,
+            'viewPath' => $viewPath,
+        ]);
 
-        if( !file_exists( $viewPath ) ){
-            $defaultController = self::getDefaultController();
-            return $defaultController->runError( new \Exception( "$viewPath does not exist", 404 ) );
-        }
-
-        $c = new $controllerClass();
-        return $c->runAction( $actionId );
+        return $c->runAction( $c->actionId );
     }
 
     public static function getDefaultController(){
-        $controllerClass = \Scope::$environment->name . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . self::createName( \Scope::$environment->web['controller'] ) . 'Controller';
-        return new $controllerClass();
+        $controllerClass = Scope::$environment->name . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . self::createName( Scope::$environment->web['controller'] ) . 'Controller';
+
+        $controllerId = Scope::$environment->web['controller'];
+        $actionId = Scope::$environment->web['action'];
+
+        $viewPath = '';
+        $controllerPath = Scope::$environment->viewPath . $controllerId . '.php';
+
+        return new $controllerClass([
+            'actionId' => $actionId,
+            'controllerId' => $controllerId,
+            'viewPath' => $viewPath,
+        ]);
     }
 
     public static function createName( $str ){
@@ -70,22 +95,25 @@ class Controller extends \scope\base\Base{
     }
 
     public function runAction( $actionId, $params = [] ){
-        $action = self::createname( $actionId );
 
+        Scope::$controller = $this;
+
+        $action = 'action' . self::createname( $actionId );
         if( method_exists( $this, $action ) ){
-            return $this->$action( $params );
+            return call_user_func_array( [$this, $action], $params );
         } else {
             $defaultController = self::getDefaultController();
-            return $defaultController->runError( new \Exception( "Action $action does not exist", 404 ) );
+            return $defaultController->runError( new HtmlException( "Page not found", 404 ) );
         }
     }
 
     public function runError( $exception ){
         $defaultController = $this->getDefaultController();
+        Scope::$statusCode = Scope::STATUS_CODE_HTML_EXCEPTION;
         if( method_exists($this, 'actionError') ){
-            return $this->actionError( $exception );
+            return $this->runAction( 'error', [$exception] );
         } else if( method_exists( $defaultController, 'actionError' ) ){
-            return $defaultController->actionError( $exception );
+            return $defaultController->runAction( 'error', [$exception] );
         } else {
             echo 'action error does not exist'; exit();
         }

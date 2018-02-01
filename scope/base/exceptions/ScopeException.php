@@ -63,7 +63,7 @@ class ScopeException extends \Exception{
         <div class='exception-wrapper'>
             <div class='exception'>
                 <h2 class='title'>
-                    Uncaught error <span class='scope-code'>(<?=$this->getCode()?>)</span>
+                    Internal server error <span class='scope-code'>(<?=$this->getCode()?>)</span>
                 </h2>
                 <div class='message'><?=$this->getMessage()?></div>
                 <div class='trace' ><?=$this->getTraceAsString()?></div>

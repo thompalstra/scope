@@ -1,5 +1,5 @@
 <?php
-namespace scope\base;
+namespace scope\core;
 
 use scope\base\validation\Rule;
 
@@ -8,6 +8,12 @@ class Base{
     public $_errors = [];
     public $_attributes = [];
     public $_oldAttributes = [];
+
+    public function __construct( $args = [] ){
+        foreach( $args as $k => $v){
+            $this->$k = $v;
+        }
+    }
 
 
     public function load(){

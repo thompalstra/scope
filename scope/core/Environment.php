@@ -1,9 +1,11 @@
 <?php
-namespace scope\base;
+namespace scope\core;
 
-use scope\base\exceptions\ScopeException;
+use Scope;
 
-class Environment extends \scope\base\Base{
+use scope\exceptionsScopeException;
+
+class Environment extends \scope\core\Base{
 
 
     public $name;
@@ -13,7 +15,7 @@ class Environment extends \scope\base\Base{
     public function rules(){
         return [
             [['name'], 'string'],
-            [['viewPath', 'controllerPath'], 'dir'],
+            [['viewPath', 'controllerPath', 'layoutPath'], 'dir'],
             [['web'], 'array']
         ];
     }
@@ -22,6 +24,7 @@ class Environment extends \scope\base\Base{
         $env =                  new self();
         $env->name =            self::getName( $httpHost );
         $env->viewPath =        self::getViewPath( $httpHost );
+        $env->layoutPath =      self::getLayoutPath( $httpHost );
         $env->controllerPath =  self::getControllerPath( $httpHost );
 
 
@@ -43,17 +46,21 @@ class Environment extends \scope\base\Base{
 
     public static function getViewPath( $httpHost ){
         $explode = explode('.', $httpHost);
-        return \Scope::$context->path . DIRECTORY_SEPARATOR . ( ( count( $explode) > 2 ) ? $explode[0] : 'frontend' )  . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+        return ( ( count( $explode) > 2 ) ? $explode[0] : 'frontend' )  . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+    }
+    public static function getLayoutPath( $httpHost ){
+        $explode = explode('.', $httpHost);
+        return ( ( count( $explode) > 2 ) ? $explode[0] : 'frontend' )  . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
     }
     public static function getControllerPath( $httpHost ){
         $explode = explode('.', $httpHost);
-        return \Scope::$context->path . DIRECTORY_SEPARATOR . ( ( count( $explode) > 2 ) ? $explode[0] : 'frontend' )  . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR;
+        return Scope::$context->path . ( ( count( $explode) > 2 ) ? $explode[0] : 'frontend' )  . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR;
     }
     public function loadConfigurations( $names = [] ){
         foreach( $names as $name ){
             $paths = [
-                \Scope::$context->path . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'settings.php',
-                \Scope::$context->path . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'params.php',
+                Scope::$context->path . $name . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'settings.php',
+                Scope::$context->path . $name . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'params.php',
             ];
 
             foreach( $paths as $path ){
@@ -67,7 +74,7 @@ class Environment extends \scope\base\Base{
     }
 
     public function loadDbConfig( $name ){
-        $path = \Scope::$context->path . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'db.php';
+        $path = Scope::$context->path . $name . DIRECTORY_SEPARATOR . 'configuration' . DIRECTORY_SEPARATOR . 'db.php';
     }
 }
 ?>

@@ -1,10 +1,13 @@
 <?php
-use scope\base\Environment;
-
+use scope\core\Environment;
 use scope\web\Controller;
 
 class Scope{
 
+    const STATUS_CODE_SUCCESS = 0;
+    const STATUS_CODE_HTML_EXCEPTION = 1;
+
+    public static $statusCode = 0;
     public static $context;
     public static $environment;
     public static $controller;
@@ -13,11 +16,11 @@ class Scope{
         include('autoloader.php');
 
         Scope::$context = new ScopeContext();
-        Scope::$context->path = dirname(__DIR__);
+        Scope::$context->path =dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR;
 
         Scope::$environment = Environment::fromHost( $_SERVER['HTTP_HOST'] );
 
-        return Scope::$controller = Controller::handle( Controller::parse( $_SERVER['REQUEST_URI'] ) );
+        return Controller::handle( Controller::parse( $_SERVER['REQUEST_URI'] ) );
     }
 }
 

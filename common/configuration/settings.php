@@ -1,7 +1,7 @@
 <?php
 return [
     'web' => [
-        'urlClass' => '\scope\web\Url',
+        'urlClass' => 'Scope\web\Url',
         'controller' => 'site',
         'action' => 'home',
         'routes' => [
