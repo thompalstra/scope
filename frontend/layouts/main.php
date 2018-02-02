@@ -1,14 +1,16 @@
 <?php
 use scope\Html;
 use common\web\assets\CommonBundle;
-$this->registerBundle( CommonBundle::className() );
+use common\web\assets\ScopeBundle;
+
+$this->registerBundles( CommonBundle::className(), ScopeBundle::className() );
 ?>
 <html>
     <head>
         <?=$this->head()?>
     </head>
     <body>
-        <nav class='flow center nav'>
+        <nav class='flow center body nav'>
             <ul class='nav list'>
                 <li class='nav item pull-left'>
                     <a href="/">Home</a>
@@ -38,6 +40,10 @@ $this->registerBundle( CommonBundle::className() );
                 'href' => Scope::$environment->params['companyEmail']
             ] )?></p>
         </footer>
+        <?=$this->footer()?>
+        <script>
+            Scope.widgets();
+        </script>
     </body>
-    <?=$this->footer()?>
+
 </html>

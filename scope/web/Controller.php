@@ -26,7 +26,13 @@ class Controller extends Scope\core\Base{
     }
     public static function handle( $route ){
         $request_uri = trim( $route[0], '/' );
+        if( strpos( $request_uri, '?' ) !== false ){
+            $request_uri = substr( $request_uri, 0, strpos( $request_uri, '?' ) );
+        }
+
         $params = $route[1];
+
+
 
         $parts = explode('/', $request_uri);
 

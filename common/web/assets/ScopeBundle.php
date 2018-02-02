@@ -1,13 +1,17 @@
 <?php
 namespace common\web\assets;
-class CommonBundle extends \scope\web\Bundle{
+class ScopeBundle extends \scope\web\Bundle{
     public static function getJs(){
         return [
-            '/web/assets/scope/scope.core.js',
+            'http://scope.js/latest/scope.core.js',
+            'http://scope.js/latest/scope.slide.js',
         ];
     }
     public static function getCss(){
-        return [];
+        return [
+            'http://scope.js/latest/scope.core.css',
+            'http://scope.js/latest/scope.slide.css',
+        ];
     }
     public static function getDepends(){
         return [];

@@ -110,6 +110,12 @@ class View extends Scope\core\Base{
         }
     }
 
+    public function registerBundles(){
+        foreach( func_get_args() as $bundle ){
+            $this->registerBundle( $bundle );
+        }
+    }
+
     public function head(){
         foreach( $this->assets[self::POS_HEAD] as $asset ){
             echo $asset;

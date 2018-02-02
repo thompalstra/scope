@@ -3,23 +3,6 @@ html,body{
     background-color: #ddd;
 }
 
-
-
-.module{
-
-}
-
-.module.outer{
-    margin-top: 10px;
-    border-top: 1px solid rgba( 0, 0, 0, .1);
-    border-bottom: 1px solid rgba( 0, 0, 0, .1);
-    margin-bottom: 10px;
-}
-.module.inner{
-    padding: 10px;
-    box-sizing: border-box;
-}
-
 a{
     color: inherit;
 }
@@ -33,8 +16,14 @@ a{
 nav.nav .nav.list{
     background-color: white;
     color: #333;
+    z-index: 1;
 }
 nav.nav .nav.item:hover{
     background-color: #aaa;
     color: white;
+}
+.body.nav,
+.body.slide,
+.body.blog-highlight{
+    margin-bottom: 10px;
 }
