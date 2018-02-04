@@ -27,9 +27,14 @@ class Scope{
     public static function query(){
         return new Query();
     }
+
+    public static function uid(){
+        return "w" . ++Scope::$context->uids . "_" . uniqid();
+    }
 }
 
 class ScopeContext{
     public $path;
+    public $uids = 0;
 }
 ?>

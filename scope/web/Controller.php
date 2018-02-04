@@ -119,8 +119,11 @@ class Controller extends Scope\core\Base{
         $defaultController = $this->getDefaultController();
         Scope::$statusCode = Scope::STATUS_CODE_HTML_EXCEPTION;
         if( method_exists($this, 'actionError') ){
+            $this->actionId = 'error';
             return $this->runAction( 'error', [$exception] );
         } else if( method_exists( $defaultController, 'actionError' ) ){
+            $defaultController->actionId = 'error';
+            var_dump( $defaultController );
             return $defaultController->runAction( 'error', [$exception] );
         } else {
             echo 'action error does not exist'; exit();

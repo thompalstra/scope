@@ -20,8 +20,16 @@ class Base{
     }
 
 
-    public function load(){
-        echo 'not implemented'; die();
+    public function load( $params = [] ){
+
+        if( isset( $params[ self::className() ] ) ){
+            foreach( $params[ self::className() ] as $k => $v ){
+                $this->$k = $v;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

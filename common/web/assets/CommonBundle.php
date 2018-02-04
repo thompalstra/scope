@@ -7,7 +7,9 @@ use scope\web\View;
 class CommonBundle extends \scope\web\Bundle{
     public static function getJs(){
         return [
-            '/web/assets/script/script.js',
+            '/web/assets/script/script.js' => [
+                'position' => View::POS_FOOTER
+            ],
             '/web/script/script.js' => [
                 'position' => View::POS_FOOTER
             ]

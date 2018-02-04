@@ -9,7 +9,7 @@ $this->registerBundles( CommonBundle::className(), ScopeBundle::className() );
     <head>
         <?=$this->head()?>
     </head>
-    <body>
+    <body loading>
         <nav class='flow center body nav'>
             <ul class='nav list'>
                 <li class='nav item pull-left'>

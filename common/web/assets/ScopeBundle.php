@@ -9,6 +9,7 @@ class ScopeBundle extends \scope\web\Bundle{
     }
     public static function getCss(){
         return [
+            'https://fonts.googleapis.com/icon?family=Material+Icons',
             'http://scope.js/latest/scope.core.css',
             'http://scope.js/latest/scope.slide.css',
         ];

@@ -7,6 +7,8 @@ class Query extends \scope\core\Base{
 
     public $select = '';
     public $from = '';
+    public $offset = '';
+    public $limit = '';
 
     public $arguments = [];
 
@@ -16,13 +18,20 @@ class Query extends \scope\core\Base{
 
     public function from( $argument ){
         if( class_exists( $argument )  ){
+            $this->className = $argument;
             $this->select( $argument::getTableName() . '.*' );
             $this->from( $argument::getTableName() );
-
         } else {
             $this->from = $argument;
         }
         return $this;
+    }
+
+    public function limit( $limit ){
+        $this->limit = $limit;
+    }
+    public function offset( $offset ){
+        $this->offset = $offset;
     }
 
     public function where( $argument ){
@@ -42,8 +51,28 @@ class Query extends \scope\core\Base{
         $this->arguments[] = [
             'WHERE' => $argument
         ];
-
         return $this;
+    }
+
+    public function all(){
+        $sth = $this->createSth();
+        return $sth->fetchAll();
+    }
+
+    public function createSth(){
+        $sth = \Scope::$context->conn->prepare( $this->createCommand() );
+        $sth->setFetchMode(\PDO::FETCH_CLASS, $this->className, [
+            $this->className => [
+                'isNewRecord' => false
+            ]
+        ]);
+        $sth->execute();
+        return $sth;
+    }
+
+    public function one(){
+        $sth = $this->createSth();
+        return $sth->fetch();
     }
 
 
@@ -57,9 +86,17 @@ class Query extends \scope\core\Base{
         foreach( $this->arguments as $argument ){
             foreach( $argument as $type => $data ){
                 if( in_array( strtoupper( $type ), ['WHERE', "AND", "OR"] ) ){
-                    $lines[] = strtoupper( $type ) . $this->createWhere( $data );
+                    $lines[] = strtoupper( $type ) . ' ' . $this->createWhere( $data );
                 }
             }
+        }
+
+        if( $this->limit ){
+            $lines[] = "LIMIT $this->limit";
+        }
+
+        if( $this->offset ){
+            $lines[] = "OFFSET $this->offset";
         }
 
         return implode(' ', $lines );
