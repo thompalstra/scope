@@ -49,6 +49,11 @@ class Html{
     public static function close( $tagName ){
         return "</$tagName>";
     }
+
+    public static function input( $options ){
+        $attr = self::attr( $options );
+        return "<input $attr/>";
+    }
 }
 
 ?>
