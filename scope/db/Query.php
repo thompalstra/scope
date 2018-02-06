@@ -6,6 +6,7 @@ use Scope;
 class Query extends \scope\core\Base{
 
     public $select = '';
+    public $update = '';
     public $from = '';
     public $offset = '';
     public $limit = '';
@@ -14,6 +15,15 @@ class Query extends \scope\core\Base{
 
     public function select( $argument ){
         $this->select = $argument;
+    }
+
+    public function update( $argument ){
+        if( class_exists( $argument )  ){
+            $this->update = $argument::getTableName();
+        } else {
+            $this->update = $argument;
+        }
+        return $this;
     }
 
     public function from( $argument ){
@@ -32,6 +42,13 @@ class Query extends \scope\core\Base{
     }
     public function offset( $offset ){
         $this->offset = $offset;
+    }
+
+    public function set( $argument ){
+        $this->arguments[] = [
+            'SET' => $argument
+        ];
+        return $this;
     }
 
     public function where( $argument ){
@@ -80,12 +97,16 @@ class Query extends \scope\core\Base{
 
         $lines = [];
 
-        $lines[] = "SELECT $this->select";
-        $lines[] = "FROM $this->from";
+        if( $this->update ){
+            $lines[] = "UPDATE $this->update";
+        } else {
+            $lines[] = "SELECT $this->select";
+            $lines[] = "FROM $this->from";
+        }
 
         foreach( $this->arguments as $argument ){
             foreach( $argument as $type => $data ){
-                if( in_array( strtoupper( $type ), ['WHERE', "AND", "OR"] ) ){
+                if( in_array( strtoupper( $type ), ['WHERE', "AND", "OR", "SET"] ) ){
                     $lines[] = strtoupper( $type ) . ' ' . $this->createWhere( $data );
                 }
             }
@@ -146,9 +167,38 @@ class Query extends \scope\core\Base{
         if( $value === null ){
             return 'NULL';
         } else if( is_string($value) ){
-            return Scope::$context->conn->quote( 'NULL' );
+            return Scope::$context->conn->quote( $value );
         }
         return $value;
+    }
+
+    public function updateAll( $className, $set, $where ){
+
+        $tableName = $className::getTableName();
+
+        if( is_array( $set ) ){
+            $s = [];
+            foreach( $set as $k => $v ){
+                $s[] = "$k = " . $this->createValue( $v );
+            }
+            $set = implode(', ', $s);
+        }
+
+        if( is_array( $where ) ){
+            $where = $this->createWhere($where);
+        }
+
+         $sth = \Scope::$context->conn->prepare( "UPDATE $tableName SET $set WHERE $where" );
+
+         $sth->execute();
+
+         if( $sth->rowCount() > 0 ){
+             $this->isNewRecord = false;
+             return true;
+         } else {
+             $this->isNewRecord = true;
+             return false;
+         }
     }
 }
 ?>

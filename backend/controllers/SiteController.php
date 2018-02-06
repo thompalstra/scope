@@ -7,12 +7,8 @@ class SiteController extends \scope\web\Controller{
             'exception' => $exception
         ]);
     }
-
     public function actionIndex(){
         return $this->render('index');
-    }
-    public function actionContact(){
-        return $this->render('contact');
     }
 }
 ?>

@@ -3,22 +3,30 @@ namespace backend\controllers\manage;
 
 use common\models\Page;
 
+use scope\base\exceptions\HtmlException;
+
 class PagesController extends \scope\web\Controller{
     public function actionView(){
 
-        $model = $this->find( $_GET['id'] );
-        var_dump($model);
-        return $this->render('view', [
-            'model' => $model
-        ]);
+        if( $model = $this->find( $_GET['id'] ) ){
+            if( $_POST && $model->load($_POST) && $model->validate() ){
+                $model->save();
+            }
+            return $this->render('view', [
+                'model' => $model
+            ]);
+        }
+
     }
     public function find( $id ){
+
         $model = \Scope::query()->from( Page::className() )->where([
-            'id' => $id
+            'and',
+            ['is_deleted' => 0]
         ])->one();
 
         if( empty( $model ) ){
-            \Scope::$controller->runError( new \Exception('dsadas') );
+            return \Scope::$controller->runError( new HtmlException('dsadas') );
         } else {
             return $model;
         }

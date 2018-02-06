@@ -101,11 +101,7 @@ class Controller extends Scope\core\Base{
     }
 
     public function runAction( $actionId, $params = [] ){
-
         Scope::$controller = $this;
-
-
-
         $action = 'action' . self::createname( $actionId );
         if( method_exists( $this, $action ) ){
             return call_user_func_array( [$this, $action], $params );

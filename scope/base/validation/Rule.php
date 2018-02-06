@@ -25,7 +25,7 @@ class Rule{
         }
 
         foreach( $attributes as $attribute ){
-            $m->$v( $attribute, $context );
+            $m->$v( $attribute, $context, $options );
         }
     }
 }

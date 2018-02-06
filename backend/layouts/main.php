@@ -26,14 +26,32 @@ $this->registerBundles( ScopeBundle::className(), CommonBundle::className() );
             </ul>
         </nav>
         <div class='body sidebar'>
-            <ul id='sidebar' class='sidebar list' hide>
-                <li sc-event='toggle' sc-on='click' sc-for='#sidebar'><i class="material-icons" icon>close</i></li>
-                <li>Manage
-                    <ul>
-                        <li><a href="/manage/pages">Pages</a></li>
-                    </ul>
-                </li>
-            </ul>
+            <div id='sidebar' class='sidebar wrapper' hide>
+                <div class='sidebar backdrop'></div>
+                <ul class='sidebar list'>
+                    <li sc-event='toggle' sc-on='click' sc-for='#sidebar'>
+                        <span>
+                            <i class="material-icons" icon>close</i>
+                        </span>
+                    </li>
+                    <li class='nav item' sc-on='click' sc-for='#sidebar' sc-event='toggle'>
+                        <a href="/">
+                            <i class="material-icons" icon>dashboard</i> Dashboard
+                        </a>
+                    </li>
+                    <li hide sc-event='toggle' sc-on='click'>
+                        <span>
+                            <i class="material-icons" icon>data_usage</i> Manage
+                        </span>
+                        <ul>
+                            <li>
+                                <a href="/manage/pages"><i class="material-icons" icon>view_compact</i> Pages</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
         </div>
         <?=$view?>
         <?=$this->footer()?>

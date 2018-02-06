@@ -4,8 +4,6 @@ namespace scope\web;
 use Scope;
 use scope\Html;
 
-use scope\base\exceptionsScopeException;
-
 class View extends Scope\core\Base{
 
     const POS_HEAD = 'head';
@@ -28,14 +26,17 @@ class View extends Scope\core\Base{
         $viewPath   =   self::getViewPath( $viewId );
         $layoutPath =   self::getLayoutPath( $layoutId );
 
-        echo $this->renderFile( $layoutPath, [
-            'view' =>  $this->renderFile( $viewPath, $data )
-        ]);
+        if( file_exists( self::getFilePath( $viewPath ) ) && file_exists( self::getFilePath( $layoutPath ) ) ){
+            echo $this->renderFile( $layoutPath, [
+                'view' =>  $this->renderFile( $viewPath, $data )
+            ]);
+        }
         return Scope::$statusCode;
     }
 
     public function renderFile( $file, $data = [] ){
         $file = self::getFilePath( $file );
+
         extract($data, EXTR_PREFIX_SAME, 'data');
         ob_start();
         require($file);

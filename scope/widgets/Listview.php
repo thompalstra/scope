@@ -34,7 +34,6 @@ class Listview extends \scope\widgets\Widget{
     public function items( $options ){
         $items = [];
         foreach( $this->dataProvider->getData() as $data ){
-            var_dump($data);
             $items[] = $this->item( $data );
         }
         return implode( "", $items );
