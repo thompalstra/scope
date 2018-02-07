@@ -10,7 +10,7 @@ class Table extends \scope\widgets\Widget{
     public $options = [
         'class' => 'table'
     ];
-    public $itemOptions = [
+    public $cellOptions = [
         'class' => 'item'
     ];
     public $headerOptions = [
@@ -27,7 +27,7 @@ class Table extends \scope\widgets\Widget{
         }
     }
     public function run(){
-        return $this->begin( $this->options ) . $this->items( $this->itemOptions ) . $this->end();
+        return $this->begin( $this->options ) . $this->items( $this->cellOptions ) . $this->end();
     }
     public function begin( $options ){
         return Html::open('table', $options);
@@ -56,26 +56,26 @@ class Table extends \scope\widgets\Widget{
         $out = Html::open('tbody');
         foreach( $this->dataProvider->getData() as $data ){
 
-            if(isset( $this->rowUrl )){
+            $rowOptions = Html::attr( ( isset( $this->rowOptions ) ) ? $this->rowOptions : [] );
 
-                $url = $this->rowUrl;
-                preg_match( '({.*})', $url, $matches ) ;
-                foreach( $matches as $match ){
-                    $attr = str_replace(['{', '}'], ['', ''], $match);
-                    $value = $data->$attr;
-                    $url = str_replace( $match, $value, $url );
+            preg_match_all( '/{(.*)}/', $rowOptions, $matches ) ;
+            foreach( $matches[1] as $match ){
+                if( property_exists( $data, $match ) ){
+                    $value = $data->$match;
+                    $rowOptions = str_replace( "{{$match}}", "$value", $rowOptions );
                 }
-
-                $options = [
-                    'sc-on' => 'click',
-                    'sc-event' => 'navigate',
-                    'sc-url' => $url
-                ];
             }
 
-            $out .= Html::open('tr', $options);
+            $out .= Html::open('tr', $rowOptions);
             foreach( $columns as $column ){
-                $out .= Html::open('td', $this->headerOptions );
+                $cellOptions = $this->cellOptions;
+                if( isset( $column['cellOptions'] ) ){
+                    foreach( $column['cellOptions'] as $k => $v ){
+                        $cellOptions[$k] = $v;
+                    }
+                }
+
+                $out .= Html::open('td', $cellOptions );
                 if( isset( $column['content'] ) ){
                     $fn = $column['content'];
                     $out .= call_user_func_array( $fn, [$data] );

@@ -24,8 +24,11 @@ class Form extends \scope\widgets\Widget{
     public $errorOptions = [
         'class' => 'form error'
     ];
+    public $wrapperOptions = [
+        'class' => 'form wrapper'
+    ];
 
-    public $template = "{rowOpen}{label}{input}{hint}{error}{rowClose}";
+    public $template = "{rowOpen}{label}{wrapperOpen}{input}{hint}{wrapperClose}{error}{rowClose}";
 
     public function prepare( $params = [] ){
         foreach( $params as $k => $v ){

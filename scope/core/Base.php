@@ -45,9 +45,8 @@ class Base{
             return false;
         }
     }
-
-
-    public function rules(){    return [];  }
+    public function attributeDescriptions(){ return []; }
+    public function rules(){ return []; }
 
     public function validate(){
         foreach( $this->rules() as $rule ){
@@ -101,13 +100,23 @@ class Base{
     }
 
     public function getAttributeLabel( $attribute ){
-        $labels = $this->attributeLabels();
-        if( isset( $labels[$attribute] ) ){
-            return $labels[$attribute];
+        $attributeLabels = $this->attributeLabels();
+        if( isset( $attributeLabels[$attribute] ) ){
+            return $attributeLabels[$attribute];
         } else {
             return self::createAttributeLabel( $attribute );
         }
     }
+
+    public function getAttributeDescription( $attribute ){
+        $attributeDescriptions = $this->attributeDescriptions();
+        if( isset( $attributeDescriptions[$attribute] ) ){
+            return $attributeDescriptions[$attribute];
+        } else {
+            return self::createAttributeLabel( $attribute );
+        }
+    }
+
     public static function createAttributeLabel( $attribute ){
         $attribute = str_replace( ['_', '-', '[', ']'], [' ', ' ', ' ', ' '], $attribute );
         $attribute = ucwords( $attribute );

@@ -8,6 +8,8 @@ class FormField extends \scope\widgets\Widget{
     public function input( $opt ){
         $template = $this->form->template;
         $template = str_replace( '{rowOpen}', $this->rowOpen( $this->form->rowOptions ), $template );
+        $template = str_replace( '{wrapperOpen}', $this->wrapperOpen( $opt ), $template );
+        $template = str_replace( '{wrapperClose}', $this->wrapperClose(), $template );
         $template = str_replace( '{label}', $this->createLabel( $this->form->labelOptions ), $template );
         $template = str_replace( '{input}', $this->createInput( $opt ), $template );
         $template = str_replace( '{hint}', $this->createHint( $this->form->hintOptions ), $template );
@@ -25,7 +27,35 @@ class FormField extends \scope\widgets\Widget{
 
         $options['name'] = self::createInputName();
         $options['value'] = self::createInputValue();
-        return Html::open( 'input', $options ) . Html::close( 'input' );
+
+        return  Html::open( 'input', $options ) . Html::close( 'input' );
+    }
+
+    public function wrapperOpen( $wrapper ){
+        $options = $this->form->wrapperOptions;
+        $wrapper = ( isset( $wrapper['wrapperOptions'] ) ? $wrapper['wrapperOptions'] : [] );
+
+        foreach( $options as $k => $v ){
+            $options[$k] = $v;
+        }
+
+        if( is_object( $this->model ) ){
+            $attr = $this->attribute;
+            if( count( $this->model->getHints( $attr ) ) > 0 ){
+                $options['has-error'] = '';
+            }
+            if( count( $this->model->getErrors( $attr ) ) > 0 ){
+                $options['has-hint'] = '';
+            }
+        } else {
+            $hints = [];
+            $errors = [];
+        }
+
+        return Html::open( 'div', $options );
+    }
+    public function wrapperClose(){
+        return Html::close( 'div' );
     }
 
     public function createInputName(){
@@ -86,8 +116,8 @@ class FormField extends \scope\widgets\Widget{
             $errors = [];
         }
 
-        if( count( $errors ) > 0 ){
-            return Html::open( 'div', $hintOptions ) . implode("\n", $hints) . Html::close( 'div' );
+        if( count( $errors ) > 0 && count( $hints ) > 0 ){
+            return Html::open( 'div', $hintOptions ) . Html::label( implode("\n", $hints), [] ) . Html::close( 'div' );
         } else {
             return '';
         }

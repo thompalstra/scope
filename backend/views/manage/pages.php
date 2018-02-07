@@ -7,8 +7,21 @@ use scope\Html;
             <?=Table::widget([
                 'dataProvider' => $dataProvider,
                 'rowUrl' => '/manage/pages/view?id={id}',
+                'rowOptions' => [
+                    'sc-on' => 'click',
+                    'sc-event' => 'navigate',
+                    'sc-url' => '/manage/pages/view?id={id}',
+                    'sc-ignore-shift' => '1',
+                    'sc-ignore-ctrl' => '1'
+                ],
                 'columns' => [
                     [
+                        'cellOptions' => [
+                            'class' => 'item select',
+                            'style' => [
+                                'width' => '25px'
+                            ]
+                        ],
                         'header' => '',
                         'content' => function( $data ){
                             return Html::input( [

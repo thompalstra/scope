@@ -20,17 +20,19 @@ class Html{
     }
 
     public static function attr( $options = [], $inner = false ){
-        $lines = [];
-        foreach( $options as $key => $val ){
-            if( is_array( $val ) ){
+        if( is_array( $options ) ){
+            $lines = [];
+            foreach( $options as $key => $val ){
+                if( is_array( $val ) ){
 
-                $lines[] = $key . '="' . self::styleAttr( $val ) . '"';
-            } else {
-                $lines[] = $key . '="' . $val . '"';
+                    $lines[] = $key . '="' . self::styleAttr( $val ) . '"';
+                } else {
+                    $lines[] = $key . '="' . $val . '"';
+                }
             }
+            return implode( " ", $lines );
         }
-
-        return implode( " ", $lines );
+        return $options;
     }
 
     public static function styleAttr( $options ){
