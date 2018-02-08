@@ -1,6 +1,8 @@
 <?php
 namespace common\models;
 
+use scope\base\DataProvider;
+
 class Page extends \scope\base\Model{
 
     public static function getTableName(){
@@ -25,6 +27,16 @@ class Page extends \scope\base\Model{
             'url' => 'The url of this page',
             'name' => 'The name of this page'
         ];
+    }
+
+    public function getPageModuleDataProvider(){
+        return new DataProvider([
+            'data' => $this->getPageModules(),
+            'pagination' => [
+                'page' => 1,
+                'pageSize' => 20
+            ]
+        ]);
     }
 
     public function getPageModules(){

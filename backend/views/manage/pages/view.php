@@ -1,6 +1,9 @@
 <?php
 use scope\widgets\Form;
 use scope\Html;
+
+use common\models\PageModule;
+use scope\widgets\PageModuleWidget;
 ?>
 
 <div class='flow center'>
@@ -28,17 +31,33 @@ use scope\Html;
             'method' => 'POST',
             'class' => 'form'
         ])?>
-        <div class='col xs6'>
-            <?=$form->field( $model, 'url' )->input([
-                'type' => 'text',
-                'title' => $model->getAttributeDescription( 'url' ),
-                'placeholder' => $model->getAttributeLabel( 'url' )
+        <div class='col xs12'>
+            <div class='col xs6'>
+                <?=$form->field( $model, 'url' )->input([
+                    'type' => 'text',
+                    'title' => $model->getAttributeDescription( 'url' ),
+                    'placeholder' => $model->getAttributeLabel( 'url' )
+                ])?>
+                <?=$form->field( $model, 'name' )->input([
+                    'type' => 'text',
+                    'title' => $model->getAttributeDescription( 'name' ),
+                    'placeholder' => $model->getAttributeLabel( 'name' )
+                ])?>
+            </div>
+            <div class='col xs6'></div>
+        </div>
+        <div class='col xs12'>
+            <?=PageModuleWidget::widget([
+                'dataProvider' => $model->getPageModuleDataProvider()
             ])?>
-            <?=$form->field( $model, 'name' )->input([
-                'type' => 'text',
-                'title' => $model->getAttributeDescription( 'name' ),
-                'placeholder' => $model->getAttributeLabel( 'name' )
-            ])?>
+            <!-- <div class='page-modules'> -->
+                <?php
+                // echo PageModule::createToolbox();
+                // echo Html::open( 'div', [
+                //     'class' => 'content'
+                // ] );
+                ?>
+            <!-- </div> -->
         </div>
 
         <?=Html::button( 'send', [

@@ -3,7 +3,7 @@ namespace scope\widgets;
 
 class Widget extends \scope\core\Base{
 
-    public function prepare(){}
+    public function prepare( $params ){}
     public function run(){}
 
     public static function widget( $params ){
