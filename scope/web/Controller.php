@@ -22,7 +22,14 @@ class Controller extends Scope\core\Base{
     }
 
     public static function parse( $request_uri ){
-        return [$request_uri, $_GET];
+
+        if( strpos($request_uri,'?') !== false ){
+            $request_uri = substr( $request_uri, 0, strpos($request_uri,'?')  );
+        }
+
+        $urlClass = \Scope::$environment->web['urlClass'];
+        $urlClass = new $urlClass();
+        return $urlClass->parse( $request_uri, $_GET );
     }
     public static function handle( $route ){
         $request_uri = trim( $route[0], '/' );

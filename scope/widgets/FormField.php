@@ -4,7 +4,7 @@ namespace scope\widgets;
 use scope\Html;
 use scope\core\Base;
 
-class FormField extends \scope\widgets\Widget{
+class FormField extends \scope\core\Base{
     public function input( $opt ){
         $template = $this->form->template;
         $template = str_replace( '{rowOpen}', $this->rowOpen( $this->form->rowOptions ), $template );
@@ -17,6 +17,28 @@ class FormField extends \scope\widgets\Widget{
         $template = str_replace( '{rowClose}', $this->rowClose(), $template );
         return $template;
     }
+    public function widget( $className, $opt ){
+        $template = $this->form->template;
+        $template = str_replace( '{rowOpen}', $this->rowOpen( $this->form->rowOptions ), $template );
+        $template = str_replace( '{wrapperOpen}', $this->wrapperOpen( $opt ), $template );
+        $template = str_replace( '{wrapperClose}', $this->wrapperClose(), $template );
+        $template = str_replace( '{label}', $this->createLabel( $this->form->labelOptions ), $template );
+        $template = str_replace( '{input}', $this->createWidget( $className, $opt ), $template );
+        $template = str_replace( '{hint}', $this->createHint( $this->form->hintOptions ), $template );
+        $template = str_replace( '{error}', $this->createError( $this->form->errorOptions ), $template );
+        $template = str_replace( '{rowClose}', $this->rowClose(), $template );
+        return $template;
+    }
+
+    public function createWidget( $className, $options ){
+        if( class_exists( $className ) ){
+
+            $options['data'] = $this->model;
+            $options['attribute'] = $this->attribute;
+
+            return $className::widget($options);
+        }
+    }
 
     public function createInput( $opt ){
         $options = $this->form->inputOptions;
@@ -25,8 +47,8 @@ class FormField extends \scope\widgets\Widget{
             $options[$k] = $v;
         }
 
-        $options['name'] = self::createInputName();
-        $options['value'] = self::createInputValue();
+        $options['name'] = self::createInputName( $this->model, $this->attribute );
+        $options['value'] = self::createInputValue( $this->model, $this->attribute );
 
         return  Html::open( 'input', $options ) . Html::close( 'input' );
     }
@@ -58,26 +80,24 @@ class FormField extends \scope\widgets\Widget{
         return Html::close( 'div' );
     }
 
-    public function createInputName(){
+    public static function createInputName( $model, $attribute ){
 
-        if( is_object ( $this->model ) ){
-            $model = $this->model;
+        if( is_object ( $model ) ){
             $base = $model::subClassName();
         } else {
-            $base = $this->model;
+            $base = $model;
         }
 
-        $attr = $this->attribute;
+        $attr = $attribute;
 
         if( $attr[ strlen($attr) - 2 ] == '[' && $attr[ strlen($attr) -1 ] == ']' ){
             return $base . '[' . str_replace([ '[', ']' ], ['', ''], $attr) . '][]';
         }
         return $base . '[' . $attr . ']';
     }
-    public function createInputValue(){
-        if( is_object( $this->model ) ){
-            $attr = $this->attribute;
-            $model = $this->model;
+    public static function createInputValue( $model, $attribute ){
+        if( is_object( $model ) ){
+            $attr = $attribute;
             return $model->$attr;
         }
         return '';

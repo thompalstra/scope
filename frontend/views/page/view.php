@@ -1,0 +1,1 @@
+<?=\Scope::$context->page->getHtml()?>

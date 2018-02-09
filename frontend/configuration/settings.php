@@ -1,7 +1,7 @@
 <?php
 return [
     'web' => [
-        'urlClass' => 'Scope\web\Url',
+        'urlClass' => 'frontend\components\web\Url',
         'controller' => 'site',
         'action' => 'index',
         'layout' => 'main',

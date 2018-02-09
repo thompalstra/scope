@@ -28,21 +28,31 @@ class Page extends \scope\base\Model{
             'name' => 'The name of this page'
         ];
     }
+    public function getHtml(){
+        $pageContent = $this->content;
 
-    public function getPageModuleDataProvider(){
-        return new DataProvider([
-            'data' => $this->getPageModules(),
-            'pagination' => [
-                'page' => 1,
-                'pageSize' => 20
-            ]
-        ]);
+        // matches widgets
+        preg_match_all( "/<widget.*>(.*)<\/widget>/", $pageContent, $matches );
+        foreach( $matches[0] as $index => $match ){
+            $inner = str_replace( ['<br>', '<br/>'], ['', ''], $match);
+            $inner = iconv("UTF-8", "UTF-8//IGNORE", preg_replace('/\s\s+/', '', $inner, -1, $count) );
+
+            preg_match( '/<widget.*>(.*)<\/widget>/', $inner, $_match );
+            if(isset($_match[1])){
+                $attributes = json_decode($_match[1], true);
+            } else {
+                $attributes = [];
+            }
+
+            preg_match( '/sc-widget-class="(.*?)"/', $matches[0][$index], $match );
+
+            $class = $match[1];
+            if( class_exists( $class ) ){
+                $pageContent = str_replace( $matches[0][$index] , $class::widget($attributes), $pageContent );
+            }
+        }
+        return $pageContent;
     }
 
-    public function getPageModules(){
-        return \Scope::query()->from( PageModule::classname() )->where([
-            'is_deleted' => 0
-        ]);
-    }
 }
 ?>

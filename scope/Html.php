@@ -36,6 +36,7 @@ class Html{
     }
 
     public static function styleAttr( $options ){
+        $lines = [];
         foreach( $options as $key => $val ){
             if( !is_array( $val ) ){
                 $lines[] = "$key:$val;";

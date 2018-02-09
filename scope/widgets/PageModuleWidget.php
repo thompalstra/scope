@@ -21,21 +21,26 @@ class PageModuleWidget extends \scope\widgets\Widget{
                 'name' => 'Slide',
                 'description' => 'The default slide provided by Scope.',
                 'className' => '\scope\widgets\Slide',
-                'attributes' => [
-                    'options' => [
-
-                    ],
-                    'items' => [
-                        [
-                            'img' => 'http://www.carasaven.com/wp-content/uploads/2017/02/banner-option-2.jpg'
-                        ]
-                    ]
-                ],
                 'options' => [
-                    'sc-allow-content' => '0',
+                    'sc-allow-edit' => '1',
                     'sc-allow-children' => '0',
                     'sc-allow-text-format' => '0',
+                    'sc-widget-class' => '\scope\widgets\Slide',
+                    'widget-class' => 'scope.slide',
                     'draggable' => 'true'
+                ],
+                'attributes' => [
+                   'options' => [
+                        'class' => 'scope slide'
+                   ],
+                   'items' => [
+                       [
+                           'img' => 'http://www.carasaven.com/wp-content/uploads/2017/02/banner-option-2.jpg'
+                       ],
+                       [
+                           'img' => 'http://www.carasaven.com/wp-content/uploads/2017/02/banner-option-2.jpg'
+                       ]
+                   ]
                 ]
             ]
         ];
@@ -92,6 +97,7 @@ class PageModuleWidget extends \scope\widgets\Widget{
         foreach( $widgets as $widget ){
             $options = (isset( $widget['options'] ) ? $widget['options'] : [] );
             $options['title'] = $widget['description'];
+            $options['sc-widget-attributes'] = htmlentities( json_encode ( isset($widget['attributes'] ) ? $widget['attributes']  : [] ) );
             $out .= Html::li($widget['name'], $options );
         }
         $out .= Html::close( 'ul' );
@@ -119,14 +125,29 @@ class PageModuleWidget extends \scope\widgets\Widget{
     }
 
     public function createContent( $options = [] ){
-        $out = Html::open( 'div', [
+        $out = '';
+
+        if( property_exists($this, 'data') ){
+            $attribute = $this->attribute;
+            $data = $this->data;
+            $content = $data->$attribute;
+            $out .= Html::textarea( $content, [
+                'name' => FormField::createInputName( $this->data, $this->attribute ),
+                'value' => FormField::createInputValue( $this->data, $this->attribute )
+            ] );
+        }
+
+
+
+
+        $out .= Html::open( 'div', [
             'class' => 'content'
         ] );
-        foreach( $this->dataProvider->getData() as $pageModule ){
-            $out .= Html::open( 'div', $options );
 
-            $out .= Html::close( 'div' );
-        }
+        $data = $this->data;
+        $content = $data->$attribute;
+
+        $out .= $content;
         $out .= Html::close( 'div' );
         return $out;
     }

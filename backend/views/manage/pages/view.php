@@ -47,17 +47,7 @@ use scope\widgets\PageModuleWidget;
             <div class='col xs6'></div>
         </div>
         <div class='col xs12'>
-            <?=PageModuleWidget::widget([
-                'dataProvider' => $model->getPageModuleDataProvider()
-            ])?>
-            <!-- <div class='page-modules'> -->
-                <?php
-                // echo PageModule::createToolbox();
-                // echo Html::open( 'div', [
-                //     'class' => 'content'
-                // ] );
-                ?>
-            <!-- </div> -->
+            <?=$form->field( $model, 'content' )->widget( PageModuleWidget::className(), [] )?>
         </div>
 
         <?=Html::button( 'send', [
